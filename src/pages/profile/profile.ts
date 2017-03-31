@@ -12,6 +12,7 @@ import { NavController, NavParams } from 'ionic-angular';
 	selector: 'page-profile',
 	templateUrl: 'profile.html'
 })
+
 export class ProfilePage {
 
     form: FormGroup;
