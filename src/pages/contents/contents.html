@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{this.pageTitle[0].value}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+
+  <ion-list>
+    <ion-card *ngFor="let item of items" (click)="itemTapped($event, item)">
+
+      <div *ngIf="item.medias">
+        <div *ngIf="item.medias['1']">
+          <div *ngIf="item.medias['1'].file">
+            <img src="http://hub.allice.fr/{{item.medias['1'].file}}" />
+          </div>
+        </div>
+      </div>
+
+      <ion-card-content>
+        <ion-card-title>{{item.nom}}</ion-card-title>
+        <div [innerHTML]="'<p>' + item.abstract + '</p>'"></div>
+      </ion-card-content>
+    </ion-card>
+
+
+  </ion-list>
+  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-list>
+      <ion-item>
+        <ion-label>Sélectionner un type</ion-label>
+        <ion-select [(ngModel)]="type" cancelText="Annuler" okText="Ok" (ionCancel)="onCancel()" (ionChange)="onChange()">
+          <ion-option *ngFor="let t of contentsType" value="{{t.key}}">{{t.value}}</ion-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+  </ion-toolbar>
+</ion-footer>

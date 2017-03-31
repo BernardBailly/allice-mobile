@@ -1,0 +1,84 @@
+// http://ionicframework.com/docs/v2/theming/
+// App Global Sass
+// --------------------------------------------------
+// Put style rules here that you want to apply globally. These
+// styles are for the entire app and not just one component.
+// Additionally, this file can be also used as an entry point
+// to import other Sass files to be included in the output CSS.
+//
+// Shared Sass variables, which can be used to adjust Ionic's
+// default Sass variables, belong in "theme/variables.scss".
+//
+// To declare rules for a specific mode, create a child rule
+// for the .md, .ios, or .wp mode classes. The mode class is
+// automatically applied to the <body> element in the app.
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.logo {
+  text-align: center;
+
+  > div {
+    width: 200px;
+    height: 200px;
+    line-height: 200px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+    img {
+      vertical-align: middle;
+      display: inline;
+    }
+  }
+}
+
+.menu-inner {
+  .spacer {
+    height: 30px;
+  }
+
+  .logo {
+    > div {
+      background-color: #fff;
+      border-radius: 20px;
+      height: auto;
+      width: 220px;
+      padding: 10px 20px;
+      text-align: center;
+
+      img {
+        display: block;
+        margin: auto;
+      }
+    }
+  }
+
+  .content-md {
+    background: -moz-linear-gradient(-45deg, rgba(92,174,58,1) 0%, rgba(214,242,208,1) 100%);
+    background: -webkit-linear-gradient(-45deg, rgba(92,174,58,1) 0%,rgba(214,242,208,1) 100%);
+    background: linear-gradient(135deg, rgba(92,174,58,1) 0%,rgba(214,242,208,1) 100%);
+  }
+
+  .item-md {
+    background-color: transparent;
+    color: #fff;
+    border-bottom: 0;
+
+    .label-md {
+      text-align: center;
+    }
+
+    &:hover {
+      background: rgba(255,255,255,0.6);
+      color: #555;
+    }
+  }
+
+  .list-md .item-block .item-inner {
+    border-bottom: 0;
+  }
+}

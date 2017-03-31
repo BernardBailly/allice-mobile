@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Mon compte</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+
+<ion-content padding>
+
+  <ion-list no-line>
+    <form [formGroup]="form">
+      <ion-item>
+        <ion-label floating>Nom</ion-label>
+        <ion-input type="text" formControlName="nom"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Prénom</ion-label>
+        <ion-input type="text" formControlName="prenom"></ion-input>
+      </ion-item>
+    </form>
+  </ion-list>
+  <button ion-button full color="primary" (click)="save()">Enregistrer</button>
+</ion-content>

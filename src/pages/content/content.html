@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>En détail</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+
+<ion-content>
+  <div *ngIf="item.type==1 || item.type==3 ||  item.type==4 || item.type==8 || item.type==11">
+    <div *ngIf="item.medias">
+      <div *ngIf="item.medias['1']">
+        <div *ngIf="item.medias['1'].file">
+          <img src="http://hub.allice.fr/{{item.medias['1'].file}}" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="item.type==10">
+    <div class="video-container">
+      <iframe [src]='item.videoUrl' frameborder="0" allowfullscreen></iframe>
+    </div>
+  </div>
+
+
+<article>
+
+  <h1>{{item.nom}}</h1>
+
+  <div *ngIf="item.type==1 || item.type==3 ||  item.type==4 || item.type==8 || item.type==11">
+    <div  [innerHTML]="item.content"></div>
+    <div *ngIf="item.medias">
+      <div *ngIf="item.medias['2']">
+        <div *ngIf="item.medias['2'].file">
+          <img src="http://hub.allice.fr/{{item.medias['2'].file}}" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="item.type==7">
+    <p><button (click)="download()" ion-button>Télécharger le document </button>
+  </div>
+
+  <div *ngIf="item.type==10">
+    <div  [innerHTML]="item.resume"></div>
+
+  </div>
+</article>
+
+</ion-content>
