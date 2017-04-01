@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams,AlertController,ToastController} from 'ionic-angular';
+import { Auth } from '../../providers/auth';
+import { Loading } from '../../providers/loading';
 
 /*
   Generated class for the Profile page.
@@ -17,20 +19,88 @@ export class ProfilePage {
 
     form: FormGroup;
     submitAttempt: boolean = false;
+	id: any = {};
+	nom: string = '';
+	prenom: string = '';
+	civilite: string = '';
+	fonction: string = '';
+	email: string = '';
 
-	constructor(public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder) {
-		this.form = formBuilder.group({
-			nom: [''],
-			prenom: ['']
+
+	constructor(public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public authService: Auth, public loading: Loading,public alertCtrl:AlertController,public toastCtrl: ToastController) {
+
+		this.form = this.formBuilder.group({
+			nom: [this.nom, Validators.required],
+			prenom: [this.prenom, Validators.required],
+			email: [this.email, Validators.required],
+			fonction: [this.fonction],
+			civilite: [this.civilite]
+
 		});
+
 	}
 
 	ionViewDidLoad() {
-		console.log('ionViewDidLoad ProfilePage');
+		this.loading.showLoader('Patientez...');
+
+		this.authService.me().then((res) => {
+			console.log(res[Object.keys(res)[0]]);
+			let me = res[Object.keys(res)[0]];
+			this.nom = me.nom;
+			this.prenom = me.prenom;
+			this.civilite = me.civilite;
+			this.fonction = me.fonction;
+			this.email = me.email;
+			this.id = me._id.$id;
+
+			this.form = this.formBuilder.group({
+				nom: [this.nom],
+				prenom: [this.prenom],
+				email: [this.email],
+				fonction: [this.fonction],
+				civilite: [this.civilite]
+			});
+
+			this.loading.loader.dismiss();
+		}, (err) => {
+			console.log(err);
+			this.loading.loader.dismiss();
+		});
+
 	}
 
 	save() {
-
+		this.loading.showLoader('Enregistrement en cours');
+		this.form.value.id=this.id;
+		console.log(this.form.value);
+		this.authService.saveMe(this.form.value).then((res) => {
+			console.log(res);
+			this.showSuccess('Votre profil a été mis à jour');
+			this.loading.loader.dismiss();
+		}, (err) => {
+			this.showAlert('Erreur !',err);
+			this.loading.loader.dismiss();
+		});
     }
+
+
+	showAlert(messTitle,message) {
+	   let alert = this.alertCtrl.create({
+		 title: messTitle,
+		 subTitle: message,
+		 buttons: ['OK']
+	   });
+	   alert.present();
+	 }
+
+
+	 showSuccess(message) {
+	    let toast = this.toastCtrl.create({
+	      message: message,
+		   //position: 'middle',
+	      duration: 3000
+	    });
+	    toast.present();
+	  }
 
 }

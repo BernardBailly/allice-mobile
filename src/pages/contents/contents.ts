@@ -3,6 +3,7 @@ import { NavController, NavParams, LoadingController, AlertController } from 'io
 import { ContentsProvider } from '../../providers/contentsProvider';
 import {ContentPage} from '../content/content';
 import { AppConfig } from '../../providers/appConfig';
+import { Loading } from '../../providers/loading';
 
 
 
@@ -35,7 +36,6 @@ export class Contents {
 		keywords:Array<{}>,
 	}>;
 	nbItems: number;
-	loading: any;
 	skip: number = 0;
 	type: string = "type_1";
 	perPage: number = 20;
@@ -47,7 +47,7 @@ export class Contents {
 		value: string
 	}>;
 
-	constructor(public navCtrl: NavController,public navParams: NavParams,public contentsProvider: ContentsProvider,public loadingCtrl: LoadingController,public alertCtrl: AlertController,public config: AppConfig) {
+	constructor(public navCtrl: NavController,public navParams: NavParams,public contentsProvider: ContentsProvider,public loading: Loading,public alertCtrl: AlertController,public config: AppConfig) {
 
 		if (typeof navParams.get('type') !== 'undefined') {
 			this.type = navParams.get('type');
@@ -74,7 +74,7 @@ export class Contents {
 	/* init Page
 	----------------------*/
 	ionViewDidLoad() {
-		this.showLoader();
+		this.loading.showLoader('Chargement...');
 		let filters = {
 			'query': JSON.stringify(
 				[
@@ -94,11 +94,11 @@ export class Contents {
 		this.contentsProvider.getContents(filters).then((res: any) => {
 			this.nbItems = res.dataTotal;
 			this.items = res.data;
-			this.loading.dismiss();
+			this.loading.loader.dismiss();
 		}, (err) => {
-			this.showError('Désolé !', 'Aucun résultats');
+			this.showError('Désolé !', 'Aucun résultat');
 			console.log("Erreur de récupération des contenus : " + err);
-			this.loading.dismiss();
+			this.loading.loader.dismiss();
 		});
 
 	}
@@ -146,14 +146,6 @@ export class Contents {
 		alert.present();
 	}
 
-	showLoader() {
-
-		this.loading = this.loadingCtrl.create({
-			content: 'Chargement...'
-		});
-		this.loading.present();
-
-	}
 
 	itemTapped(event, item) {
 		this.navCtrl.push(ContentPage, {

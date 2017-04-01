@@ -9,20 +9,44 @@
 
 
 
-<ion-content padding>
+<ion-list no-lines>
+  <form [formGroup]="form">
 
-  <ion-list no-line>
-    <form [formGroup]="form">
-      <ion-item>
-        <ion-label floating>Nom</ion-label>
-        <ion-input type="text" formControlName="nom"></ion-input>
-      </ion-item>
 
-      <ion-item>
-        <ion-label floating>Prénom</ion-label>
-        <ion-input type="text" formControlName="prenom"></ion-input>
-      </ion-item>
-    </form>
-  </ion-list>
-  <button ion-button full color="primary" (click)="save()">Enregistrer</button>
-</ion-content>
+    <ion-item>
+      <ion-label floating>Civilité</ion-label>
+      <ion-select formControlName="civilite">
+        <ion-option value="Mr">Mr</ion-option>
+        <ion-option value="Mme">Mme</ion-option>
+        <ion-option value="Melle">Melle</ion-option>
+
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Nom</ion-label>
+      <ion-input type="text" formControlName="nom"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating>Prénom</ion-label>
+      <ion-input type="text" formControlName="prenom"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating>Email</ion-label>
+      <ion-input type="text" formControlName="email"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating>Fonction</ion-label>
+      <ion-input type="text" formControlName="fonction"></ion-input>
+    </ion-item>
+
+
+
+
+    <ion-item>
+      <button full ion-button color="primary" (click)="save()">Enregistrer</button>
+    </ion-item>
+  </form>
+</ion-list>

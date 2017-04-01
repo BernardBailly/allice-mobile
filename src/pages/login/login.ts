@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { NavController, LoadingController,AlertController } from 'ionic-angular';
+import { NavController, AlertController } from 'ionic-angular';
 import { Auth } from '../../providers/auth';
+import { Loading } from '../../providers/loading';
 import { Contents } from '../contents/contents';
 
 /*
@@ -17,28 +18,17 @@ export class LoginPage {
 
     email: string;
     password: string;
-    loading: any;
 
-    constructor(public navCtrl: NavController, public authService: Auth, public loadingCtrl: LoadingController,public alertCtrl: AlertController) {
+
+    constructor(public navCtrl: NavController, public authService: Auth, public loading: Loading,public alertCtrl: AlertController) {
     }
 
     ionViewDidLoad() {
-    /*    this.showLoader();
-        //Check if already authenticated
-        this.authService.checkAuthentication().then((res) => {
-            console.log("Already authorized");
-            this.loading.dismiss();
-            this.navCtrl.setRoot(Contents);
-        }, (err) => {
-            console.log("Not already authorized");
-            this.loading.dismiss();
-        });*/
-
     }
 
     login(){
 
-        this.showLoader();
+        this.loading.showLoader('Authentification...');
 
         let credentials = {
             username: this.email,
@@ -50,11 +40,12 @@ export class LoginPage {
 
 
         this.authService.login(credentials).then((result) => {
-            this.loading.dismiss();
+            this.authService.checkAuthentication();
+            this.loading.loader.dismiss();
             console.log('Yes ! Vous êtes authentifié');
             this.navCtrl.setRoot(Contents);
         }, (err) => {
-            this.loading.dismiss();
+            this.loading.loader.dismiss();
             this.showError('Désolé !','Merci de vérifier vos identifiants de connexion.');
             this.email='';
             this.password='';
@@ -72,13 +63,6 @@ export class LoginPage {
        alert.present();
      }
 
-    showLoader(){
 
-        this.loading = this.loadingCtrl.create({
-            content: 'Authentification...'
-        });
-        this.loading.present();
-
-    }
 
 }

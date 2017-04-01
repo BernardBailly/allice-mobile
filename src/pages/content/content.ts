@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, LoadingController, AlertController, Platform } from 'ionic-angular';
-import { ContentsProvider } from '../../providers/contentsProvider';
-import {File, Transfer} from 'ionic-native';
+import { NavController, NavParams,AlertController, Platform } from 'ionic-angular';
+import { Loading } from '../../providers/loading';
+import {Transfer} from 'ionic-native';
 import { DomSanitizer } from '@angular/platform-browser';
-let cordova: any;
+import { AppConfig } from '../../providers/appConfig';
+
+
+declare var cordova: any;
+
 
 /*
   Generated class for the Content page.
@@ -18,17 +22,20 @@ let cordova: any;
 export class ContentPage {
 	item: any;
 	storageDirectory: string = '';
-    videoUrl:any;
+    videoUrl: any;
+	fileLocation: any;
+	docDownloaded:boolean=false;
 
 
-	constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, public alertCtrl: AlertController,public sanitizer :DomSanitizer) {
+
+	constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, public alertCtrl: AlertController,public loading: Loading, public sanitizer: DomSanitizer, public config: AppConfig) {
 		this.item = navParams.get('item');
 
 
-        if(this.item.type==10){
-			if(this.item.video_vendor[0]=='YT'){
-                this.item.videoUrl=this.sanitizer.bypassSecurityTrustResourceUrl("http://www.youtube.com/embed/"+this.item.video_id+"?rel=0");
-            }else if(this.item.video_vendor[0]=='Vimeo'){
+        if (this.item.type == 10) {
+			if (this.item.video_vendor[0] == 'YT') {
+                this.item.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl("http://www.youtube.com/embed/" + this.item.video_id + "?rel=0");
+            } else if (this.item.video_vendor[0] == 'Vimeo') {
                 //this.item.videoUrl='http://www.youtube.com/embed/'+this.item.video_id+'?rel=0';
             }
 		}
@@ -58,18 +65,22 @@ export class ContentPage {
 
 	download() {
 		this.platform.ready().then(() => {
-
+			this.loading.showLoader('Télécharment en cours...');
 			let doc = this.item.medias[3].file;
-			const fileTransfer = new Transfer();
-			fileTransfer.download(doc, this.storageDirectory + doc).then((entry) => {
-
-				const alertSuccess = this.alertCtrl.create({
-					title: `Download Succeeded!`,
-					subTitle: `${doc} a été téléchargé vers: ${entry.toURL()}`,
+			const FileTransfer = new Transfer();
+			FileTransfer.download(this.config.get('Api_root') + doc, this.storageDirectory + doc).then((entry) => {
+				console.log(entry);
+				this.fileLocation = entry;
+				this.docDownloaded=true;
+				this.loading.loader.dismiss();
+				this.open()
+			/*	const alertSuccess = this.alertCtrl.create({
+					title: `Téléchargement terminé !`,
+					subTitle: `Document téléchargé vers :<br><strong> ${entry.toURL()}</strong>`,
 					buttons: ['Ok']
-				});
+				});*/
 
-				alertSuccess.present();
+				//alertSuccess.present();
 
 			}, (error) => {
 
@@ -79,6 +90,7 @@ export class ContentPage {
 					buttons: ['Ok']
 				});
 
+				this.loading.loader.dismiss();
 				alertFailure.present();
 
 			});
@@ -86,6 +98,15 @@ export class ContentPage {
 		});
 
 	}
+
+
+	open() {
+
+		let doc = this.config.get('Api_root') +this.item.medias[3].file;
+		console.log(doc);
+		cordova.InAppBrowser.open( doc, '_blank', 'location=no');
+	}
+
 
 
 }

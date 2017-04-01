@@ -1,9 +1,9 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { AlliceApp } from './app.component';
-import { Http } from '@angular/http';
 import { IonicStorageModule  } from '@ionic/storage';
 import { Auth } from '../providers/auth';
+import { Loading } from '../providers/loading';
 import { ContentsProvider } from '../providers/contentsProvider';
 import { AppConfig } from '../providers/appConfig';
 
@@ -67,6 +67,7 @@ const cloudSettings: CloudSettings = {
     StatusBar,
     SplashScreen,
     Auth,
+    Loading,
     ContentsProvider,
     AppConfig,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
