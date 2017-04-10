@@ -20,6 +20,7 @@ export class ProfilePage {
     form: FormGroup;
     submitAttempt: boolean = false;
 	id: any = {};
+	kObj_id:any='';
 	nom: string = '';
 	prenom: string = '';
 	civilite: string = '';
@@ -44,7 +45,6 @@ export class ProfilePage {
 		this.loading.showLoader('Patientez...');
 
 		this.authService.me().then((res) => {
-			console.log(res[Object.keys(res)[0]]);
 			let me = res[Object.keys(res)[0]];
 			this.nom = me.nom;
 			this.prenom = me.prenom;
@@ -52,6 +52,7 @@ export class ProfilePage {
 			this.fonction = me.fonction;
 			this.email = me.email;
 			this.id = me._id.$id;
+			this.kObj_id=me.kObj_id;
 
 			this.form = this.formBuilder.group({
 				nom: [this.nom],
@@ -72,11 +73,17 @@ export class ProfilePage {
 	save() {
 		this.loading.showLoader('Enregistrement en cours');
 		this.form.value.id=this.id;
+		this.form.value.kObj_id=this.kObj_id;
 		console.log(this.form.value);
 		this.authService.saveMe(this.form.value).then((res) => {
-			console.log(res);
-			this.showSuccess('Votre profil a été mis à jour');
-			this.loading.loader.dismiss();
+			this.authService.checkAuthentication().then(res=>{
+				console.log('Nouveau profil',res);
+				this.showSuccess('Votre profil a été mis à jour');
+				this.loading.loader.dismiss();
+			},err=>{
+				console.log(err);
+			});
+
 		}, (err) => {
 			this.showAlert('Erreur !',err);
 			this.loading.loader.dismiss();

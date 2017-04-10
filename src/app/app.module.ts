@@ -1,11 +1,15 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { BrowserModule} from '@angular/platform-browser';
+import { HttpModule} from '@angular/http';
 import { AlliceApp } from './app.component';
 import { IonicStorageModule  } from '@ionic/storage';
+import { File } from '@ionic-native/file';
 import { Auth } from '../providers/auth';
 import { Loading } from '../providers/loading';
 import { ContentsProvider } from '../providers/contentsProvider';
 import { AppConfig } from '../providers/appConfig';
+
 
 import { LoginPage } from '../pages/login/login';
 import { ProfilePage } from '../pages/profile/profile';
@@ -49,6 +53,8 @@ const cloudSettings: CloudSettings = {
     SettingsPage
   ],
   imports: [
+    BrowserModule,
+    HttpModule,
     IonicModule.forRoot(AlliceApp),
     IonicStorageModule.forRoot(),
     CloudModule.forRoot(cloudSettings)
@@ -70,6 +76,7 @@ const cloudSettings: CloudSettings = {
     Loading,
     ContentsProvider,
     AppConfig,
+    File,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
   ]
 })

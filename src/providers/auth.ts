@@ -41,7 +41,7 @@ export class Auth {
 				data['field'] = JSON.stringify(me);
 				data['collection'] = 'unce_lecteurs';
 				data['rawdata'] = 1;
-				data['unce_lecteurs'] = me.id;
+				data['unce_lecteurs'] = me.kObj_id;
 				data['action'] = 'setLecteurService';
 				data['access_token'] = token;
 				let headers = new Headers();
@@ -50,7 +50,14 @@ export class Auth {
 				this.http.post(this.config.get('Api_root') + 'api/saveme', this.transformRequest(data), { headers: headers })
 					.subscribe(res => {
 						let data = res.json();
-						resolve(data);
+						this.storage.remove('me').then(() => {
+							console.log("Cache 'me' Supprimé");
+							resolve(data);
+                        }, (err) => {
+                            console.log('erreur !', err);
+							reject(err);
+                        })
+
 					}, (err) => {
 						reject(err);
 					});

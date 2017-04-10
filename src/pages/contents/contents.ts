@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
+import { NavController, NavParams, AlertController } from 'ionic-angular';
 import { ContentsProvider } from '../../providers/contentsProvider';
 import {ContentPage} from '../content/content';
 import { AppConfig } from '../../providers/appConfig';
 import { Loading } from '../../providers/loading';
-
-
 
 @Component({
 	selector: 'page-contents',
@@ -20,8 +18,8 @@ export class Contents {
 		auteur: string,
 		cibles: any,
 		content: string,
-		abstract:string,
-		resume:string,
+		abstract: string,
+		resume: string,
 		date_end_publish: any,
 		date_publish: any,
 		nom: string,
@@ -29,42 +27,35 @@ export class Contents {
 		type: number,
 		medias: any,
 		profil: number,
-		slug:string,
+		slug: string,
 		statut: number,
-		video_id:any,
-		video_vendor:Array<{}>,
-		keywords:Array<{}>,
+		video_id: any,
+		video_vendor: Array<{}>,
+		keywords: Array<{}>,
 	}>;
 	nbItems: number;
 	skip: number = 0;
 	type: string = "type_1";
 	perPage: number = 20;
 	pageTitle: any;
-	videoUrl:string;
+	videoUrl: string;
 
 	contentsType: Array<{
 		key: string,
 		value: string
 	}>;
 
-	constructor(public navCtrl: NavController,public navParams: NavParams,public contentsProvider: ContentsProvider,public loading: Loading,public alertCtrl: AlertController,public config: AppConfig) {
+	constructor(public navCtrl: NavController, public navParams: NavParams, public contentsProvider: ContentsProvider, public loading: Loading, public alertCtrl: AlertController, public config: AppConfig) {
+
+		this.items = [];
 
 		if (typeof navParams.get('type') !== 'undefined') {
 			this.type = navParams.get('type');
 		}
 
-		this.contentsType = [
-			{ "key": "type_1", "value": "Articles" },
-			{ "key": "type_3", "value": "Brèves" },
-			{ "key": "type_4", "value": "Evénements" },
-			{ "key": "type_7", "value": "Documents" },
-			{ "key": "type_5", "value": "Médias" },
-			{ "key": "type_8", "value": "Réunion" },
-			{ "key": "type_10", "value": "Vidéos" },
-			{ "key": "type_11", "value": "Circulaire" }
-		];
+		this.contentsType = config.get('content_type');
 
-		let type=this.type;
+		let type = this.type;
 		this.pageTitle = this.contentsType.filter(function(obj) {
 			return obj.key == type;
 		});
@@ -75,25 +66,39 @@ export class Contents {
 	----------------------*/
 	ionViewDidLoad() {
 		this.loading.showLoader('Chargement...');
+		this.doLoad(0);
+	}
+
+	doInfinite(infiniteScroll) {
+		this.skip += this.perPage;
+		if (this.skip < this.nbItems) {
+			this.doLoad(this.skip);
+			infiniteScroll.complete();
+		} else {
+			infiniteScroll.complete();
+		}
+	}
+
+	doLoad(skip) {
 		let filters = {
-			'query': JSON.stringify(
-				[
-					{
-						"type": this.type.slice(5),
-						"statut": "1",
-						"cibles": this.config.get('cible')
-					},
-					{ "date_debut": 1 },
-					"contenus",
-					this.perPage,
-					"0"
-				]
-			)
+			'query':[
+				{
+					"type": this.type.slice(5),
+					"statut": "1",
+					"cibles": this.config.get('cible'),
+				},
+				{ "kObj_id": -1 },
+				"contenus",
+				this.perPage,
+				this.skip
+			]
 		};
 
 		this.contentsProvider.getContents(filters).then((res: any) => {
 			this.nbItems = res.dataTotal;
-			this.items = res.data;
+			for (let i = 0; i < res.data.length; i++) {
+				this.items.push(res.data[i]);
+			}
 			this.loading.loader.dismiss();
 		}, (err) => {
 			this.showError('Désolé !', 'Aucun résultat');
@@ -101,40 +106,6 @@ export class Contents {
 			this.loading.loader.dismiss();
 		});
 
-	}
-
-	doInfinite(infiniteScroll) {
-		this.skip += this.perPage;
-		if (this.skip < this.nbItems) {
-			let filters = {
-				'query': JSON.stringify(
-					[
-						{
-							"type": this.type.slice(5),
-							"statut": "1",
-							"cibles": this.config.get('cible')
-						},
-						{ "date_debut": 1 },
-						"contenus",
-						this.perPage,
-						this.skip
-					]
-				)
-			};
-
-			this.contentsProvider.getContents(filters).then((res: any) => {
-				for (let i = 0; i < res.data.length; i++) {
-					this.items.push(res.data[i]);
-				}
-				infiniteScroll.complete();
-			}, (err) => {
-				this.showError('Désolé !', 'Aucun résultat');
-				console.log("Erreur de récupération des contenus : " + err);
-				infiniteScroll.complete();
-			});
-		} else {
-			infiniteScroll.complete();
-		}
 	}
 
 	showError(messTitle, message) {
